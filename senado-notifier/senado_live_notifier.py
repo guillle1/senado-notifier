@@ -18,6 +18,7 @@ import json
 import os
 import sys
 import time
+import unicodedata
 from pathlib import Path
 
 import requests
@@ -26,6 +27,24 @@ HANDLE = "SenadoTVArgentina"
 YT_API = "https://www.googleapis.com/youtube/v3"
 BASE = Path(__file__).resolve().parent
 STATE_FILE = BASE / "state.json"
+
+# Solo se avisa si el título contiene alguna de estas palabras (sin distinguir tildes ni mayúsculas).
+# Se puede cambiar con la variable FILTER_KEYWORDS (separadas por coma). Vacía = avisar de todos los vivos.
+DEFAULT_KEYWORDS = "comision,comisiones"
+
+
+def normalize(text):
+    text = unicodedata.normalize("NFD", text)
+    return "".join(c for c in text if unicodedata.category(c) != "Mn").lower()
+
+
+def matches_filter(title):
+    raw = os.environ.get("FILTER_KEYWORDS", DEFAULT_KEYWORDS)
+    keywords = [normalize(k.strip()) for k in raw.split(",") if k.strip()]
+    if not keywords:
+        return True
+    t = normalize(title)
+    return any(k in t for k in keywords)
 
 
 def load_env():
@@ -114,6 +133,8 @@ def check_once():
     for v in current_lives(state, key):
         vid = v["id"]
         if vid in state["notified"]:
+            continue
+        if not matches_filter(v["snippet"]["title"]):
             continue
         title = html.escape(v["snippet"]["title"])
         url = f"https://www.youtube.com/watch?v={vid}"
