@@ -9,7 +9,7 @@ on:
         description: "Enviar solo un mensaje de prueba a Telegram"
         type: boolean
         default: false
-
+        
 permissions:
   contents: write
 
