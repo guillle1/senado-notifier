@@ -38,6 +38,7 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          FILTER_KEYWORDS: ${{ vars.FILTER_KEYWORDS || 'comision,comisión,plenario,plenaria' }}
         run: |
           if [ "${{ inputs.test }}" = "true" ]; then
             python senado_live_notifier.py --test
