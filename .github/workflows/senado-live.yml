@@ -2,7 +2,8 @@ name: Senado TV live notifier
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
+  schedule:
+    - cron: "*/5 12-22 * * 2-4"   # mar a jue, de 9:00 a 19:55 hora Argentina
   workflow_dispatch:
     inputs:
       test:
